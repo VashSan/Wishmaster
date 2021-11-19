@@ -23,9 +23,10 @@ You will need to install Node, download the sources, run `npm run build` once an
 ## Setup Workspace
 If you want to contribute use following settings. I recommend Visual Studio Code as editor.
 
-* Install [NodeJS](https://nodejs.org)
+* Install [NodeJS](https://nodejs.org) (16.x)
 * npm -g install typescript
 * npm -g install eslint
+* npm install
 
 ### Running
 * Tests: npm test
