@@ -157,7 +157,7 @@ test('getVisible', async () => {
     const visibility = await obsController.isSourceVisible("source");
 
     expect(visibility).toBe(true);
-    expect(obs.send).toBeCalledWith("GetSceneItemProperties", { item: "source" });
+    expect(obs.send).toBeCalledWith("GetSceneItemProperties", { item: { name: "source" } });
 });
 
 test('toggleSource', async (done) => {

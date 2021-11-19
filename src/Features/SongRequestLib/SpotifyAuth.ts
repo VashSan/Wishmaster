@@ -201,7 +201,7 @@ export class SpotifyAuth implements IWebAuth {
             this.defineCallbackAddress();
             this.defineRefreshToken();
 
-            this.app.listen(this.config.authPort, (args) => {
+            this.app.listen(this.config.authPort, () => {
                 resolve();
             });
         });
@@ -311,7 +311,7 @@ export class SpotifyAuth implements IWebAuth {
     private defineRefreshToken() {
         this.app.get('/' + this.refresh, (req, res) => {
 
-            var refresh_token = req.query.refresh_token;
+            var refresh_token = String(req.query.refresh_token);
             this.refreshAccessToken(refresh_token)
                 .then(() => {
                     res.send({

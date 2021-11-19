@@ -83,7 +83,7 @@ export class ObsController implements IObsController {
                 });
 
                 resolve();
-            }).catch(err => {
+            }).catch((err: any) => {
                 this.log.warn("Could not connect to OBS: " + err);
                 reject("Could not connect to OBS: " + err);
                 this.isConnecting = false;
@@ -102,7 +102,7 @@ export class ObsController implements IObsController {
         if (this.isConnected && this.availableScenes.has(sceneName)) {
             this.obs.send('SetCurrentScene', {
                 'scene-name': sceneName
-            }).catch(err => {
+            }).catch((err: any) => {
                 this.log.warn(`Could not switch to scene ${sceneName}. ${err}`);
             });
         } else {
@@ -115,8 +115,8 @@ export class ObsController implements IObsController {
             return;
         }
 
-        this.obs.send('GetSceneItemProperties', { item: sourceName })
-            .then(props => {
+        this.obs.send('GetSceneItemProperties', { item: { name: sourceName } })
+            .then((props: { visible: any; }) => {
                 let x = ObsController.Get_SetSceneItemProperties(sourceName, !props.visible);
                 return this.obs.send('SetSceneItemProperties', x);
             }).then(() => {
@@ -124,7 +124,7 @@ export class ObsController implements IObsController {
                     let timeout = 1000 * durationInSeconds;
                     setTimeout(() => this.toggleSource(sourceName), timeout);
                 }
-            }).catch(err => {
+            }).catch((err: any) => {
                 this.log.warn("Error toggling source: ", err);
             });
     }
@@ -132,20 +132,20 @@ export class ObsController implements IObsController {
     public setSourceVisible(sourceName: string, isVisible: boolean): void {
         const props = ObsController.Get_SetSceneItemProperties(sourceName, isVisible);
         this.obs.send('SetSceneItemProperties', props)
-            .catch(err => {
+            .catch((err: any) => {
                 this.log.warn("OBS.setSourceVisible error: ", err);
             });
     }
 
     public async isSourceVisible(sourceName: string): Promise<boolean> {
-        const result = await this.obs.send('GetSceneItemProperties', { item: sourceName });
+        const result = await this.obs.send('GetSceneItemProperties', { item: { name: sourceName } });
         return result.visible;
     }
 
     public setText(textSourceName: string, text: string) {
         let textProps = ObsController.Get_SetTextGDIPlusProperties(textSourceName, text);
         this.obs.send('SetTextGDIPlusProperties', textProps)
-            .catch(err => {
+            .catch((err: any) => {
                 this.log.warn("Error toggling source: " + err);
             });
     }
@@ -161,7 +161,7 @@ export class ObsController implements IObsController {
         return {
             "scene-name": undefined,
             rotation: undefined,
-            item: sceneItemName,
+            item: { name: sceneItemName },
             visible: visible,
             locked: undefined,
             bounds: { y: undefined, type: undefined, alignment: undefined, x: undefined },
