@@ -2,7 +2,7 @@ import { mock, MockProxy } from "jest-mock-extended";
 import { IConfiguration, IContext, ISongRequestConfig, IFileSystem, IMessage, ITagReader, ISpotifyConfig, IFeatureResponse, Seconds, IObsController } from "../../shared";
 import { SongRequest, IApiWrapper } from "../SongRequest";
 import { ILogger } from "psst-log";
-import { IPlaylist, ISongInfo } from "../SongRequestLib/PlayList";
+import { IPlaylist, ISongInfo } from "../SongRequestLib/Playlist";
 import { ISongListWriter } from "../SongRequestLib/SongListWriter";
 import { IWebAuth, IAccessToken } from "../SongRequestLib";
 
