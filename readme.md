@@ -26,9 +26,9 @@ If you want to contribute use following settings. I recommend Visual Studio Code
 * Install Node
 * npm -g install typescript
 * npm -g install eslint
-* add excludes to workspace settings
 
-			"**/.git": true,
-			"**/*.js.map": true,
-			"**/*.js": { "when": "$(basename).ts" },
-			"**/**.js": { "when": "$(basename).tsx" }
+### Running
+* Tests: npm test
+* App: npm run
+
+Note that you need to create a configuration file before running as described above.
