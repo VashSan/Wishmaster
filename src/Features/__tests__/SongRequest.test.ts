@@ -390,7 +390,7 @@ test('on next update overlay', (done) => {
         expect(fileSystem.readAll).toBeCalledWith(undefined);
         expect(fileSystem.writeAll).toBeCalledWith(undefined, "Eva Hämatom");
         done();
-    }, new Seconds(0.2).inMilliseconds());
+    }, new Seconds(1.2).inMilliseconds());
 });
 
 test('play default song', (done) => {
