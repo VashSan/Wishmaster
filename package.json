@@ -9,7 +9,7 @@
     "express": "^4.17.1",
     "imap-simple": "^4.3.0",
     "irc": "^0.5.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "nedb": "^1.8.0",
     "obs-websocket-js": "^4.0.1",
     "open": "^7.0.3",
