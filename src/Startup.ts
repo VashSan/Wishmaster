@@ -1,8 +1,8 @@
 import { LogManager, ILogger } from "psst-log";
 import { MessageProcessor, IFeature, IMessageProcessor } from "./shared/MessageProcessor";
 import {
-    Context, Database, DefeatableFeature, FileSystem, EmailAccess, UserCollection, ObsController, Seconds, LogCollection,
-    IConfiguration, IContext, IDatabase, IObsController, IEmailAccess, IFileSystem
+    Context, DefeatableFeature, FileSystem, EmailAccess, ObsController, Seconds, 
+    IConfiguration, IContext, IObsController, IEmailAccess, IFileSystem
 } from "./shared";
 import CommandLine from "./shared/CommandLine";
 import { IMainFactory, MainFactory } from "./MainFactory";
@@ -17,7 +17,6 @@ export class Startup {
     private config: IConfiguration;
     private logger: ILogger;
     private msgProcessor: IMessageProcessor;
-    private db: IDatabase;
     private email: IEmailAccess;
     private obsController: IObsController;
     private context: IContext;
@@ -37,16 +36,14 @@ export class Startup {
 
         if (context) {
             this.context = context;
-            this.db = context.getDatabase();
             this.obsController = context.getObs();
             this.email = context.getEmail();
             this.fs = context.getFileSystem();
         } else {
-            this.db = new Database(this.config);
             this.obsController = new ObsController(this.config.getObs());
             this.email = new EmailAccess(this.config);
             this.fs = new FileSystem();
-            this.context = new Context(this.config, this.logger, this.db, this.obsController, this.email, this.fs);
+            this.context = new Context(this.config, this.logger, this.obsController, this.email, this.fs);
         }
 
         this.factory.setContext(this.context);
@@ -63,6 +60,7 @@ export class Startup {
         this.parseCommandline(args);
         this.greetingsToMyHost();
         this.configureThenStart();
+        this.finalInit();
         return 0;
     }
 
@@ -78,22 +76,7 @@ export class Startup {
 
     private configureThenStart() {
         this.configureEmail();
-
         this.configureObs();
-
-        this.configureDatabase()
-            .then(() => this.finalInit())
-            .catch((err) => {
-                this.logger.error("Database load failed: " + err);
-                process.exitCode = 1;
-            });
-    }
-
-    private configureDatabase() {
-        this.logger.log("setting up db");
-        this.db.createCollection(UserCollection, "user");
-        this.db.createCollection(LogCollection, "log");
-        return this.db.waitAllLoaded(new Seconds(10));
     }
 
     private configureObs() {
@@ -146,9 +129,6 @@ export class Startup {
     private getEnabledFeatures() {
         const set = new Set<IFeature>();
         const log = this.logger.log.bind(this.logger);
-
-        const harvest = this.factory.createHarvest();
-        set.add(harvest);
 
         const map = new Map<DefeatableFeature, () => IFeature>();
         map.set(DefeatableFeature.Alerts, () => this.factory.createAlerts());

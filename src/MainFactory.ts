@@ -5,10 +5,8 @@ import { StaticAnswers } from "./Features/StaticAnswers";
 import { Stomt } from "./Features/Stomt";
 import { SongRequest } from "./Features/SongRequest";
 import { UrlFilter } from "./Features/UrlFilter";
-import Harvest from "./Features/Harvest";
 
 export interface IMainFactory {
-    createHarvest(): IFeature;
     createUrlFilter(): IFeature;
     createAlerts(): IFeature;
     createBets(): IFeature;
@@ -19,9 +17,6 @@ export interface IMainFactory {
 }
 
 export class MainFactory implements IMainFactory {
-    createHarvest(): IFeature {
-        return new Harvest(this.getContext());
-    }
     createConfiguration(): IConfiguration {
         return new Configuration();
     }

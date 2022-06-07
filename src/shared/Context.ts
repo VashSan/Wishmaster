@@ -1,5 +1,5 @@
 import { ILogger } from "psst-log";
-import { IConfiguration, IDatabase, IObsController } from "./";
+import { IConfiguration, IObsController } from "./";
 import { MediaPlayer, IMediaPlayer } from "./MediaPlayer";
 import { IEmailAccess } from "./Email";
 import { IFileSystem } from "./FileSystem";
@@ -14,7 +14,6 @@ export interface IContext {
     setArguments(args: IArgument[]): void;
     getArgument(name: string): IArgument | undefined;
     getConfiguration(): IConfiguration;
-    getDatabase(): IDatabase;
     getMediaPlayer(): IMediaPlayer;
     getObs(): IObsController;
     getEmail(): IEmailAccess;
@@ -56,21 +55,15 @@ export class Context implements IContext {
 
     public readonly logger: ILogger;
 
-    public readonly db: IDatabase;
-    getDatabase(): IDatabase {
-        return this.db;
-    }
-
     public readonly obs: IObsController;
     getObs(): IObsController {
         return this.obs;
     }
 
-    constructor(config: IConfiguration, logger: ILogger, db: IDatabase, obs: IObsController, email: IEmailAccess, fs: IFileSystem) {
+    constructor(config: IConfiguration, logger: ILogger, obs: IObsController, email: IEmailAccess, fs: IFileSystem) {
         this.config = config;
         this.mediaPlayer = new MediaPlayer(this.config);
         this.logger = logger;
-        this.db = db;
         this.obs = obs;
         this.email = email;
         this.fileSystem = fs;

@@ -1,5 +1,5 @@
 import Startup from "./Startup";
-import { IFileSystem, IConfiguration, IContext, IEmailAccess, IDatabase, DefeatableFeature, IObsController } from "./shared";
+import { IFileSystem, IConfiguration, IContext, IEmailAccess, DefeatableFeature, IObsController } from "./shared";
 import { mock, MockProxy } from "jest-mock-extended";
 import { ILogger } from "psst-log";
 import { IMessageProcessor } from "./shared/MessageProcessor";
@@ -13,7 +13,6 @@ let config: MockProxy<IConfiguration> & IConfiguration;
 let logger: MockProxy<ILogger> & ILogger;
 let context: MockProxy<IContext> & IContext;
 let email: MockProxy<IEmailAccess> & IEmailAccess;
-let database: MockProxy<IDatabase> & IDatabase;
 let msgProcessor: MockProxy<IMessageProcessor> & IMessageProcessor;
 let factory: MockProxy<IMainFactory> & IMainFactory;
 
@@ -40,9 +39,6 @@ beforeEach(() => {
 
     msgProcessor = mock<IMessageProcessor>();
 
-    database = mock<IDatabase>();
-    database.waitAllLoaded.mockResolvedValue(undefined);
-
     fs = mock<IFileSystem>();
     fs.exists.mockReturnValue(true);
     fs.readAll.mockReturnValueOnce("{}");
@@ -52,7 +48,6 @@ beforeEach(() => {
 
     context = mock<IContext>();
     context.getConfiguration.mockReturnValue(config);
-    context.getDatabase.mockReturnValue(database);
     context.getEmail.mockReturnValue(email);
     context.getObs.mockReturnValue(obs);
 
@@ -79,7 +74,6 @@ test('main (disabled features)', (done) => {
 
     // Assert
     setTimeout(() => {
-        expect(database.createCollection).toBeCalledTimes(2);
         expect(msgProcessor.connect).toBeCalledTimes(1);
         done();
     }, 100);
@@ -99,7 +93,6 @@ test('main with enabled features', (done) => {
 
     // Assert
     setTimeout(() => {
-        expect(database.createCollection).toBeCalledTimes(2);
         expect(msgProcessor.connect).toBeCalledTimes(1);
         expect(openStdin).toBeCalledTimes(1);
         done();

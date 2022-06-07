@@ -1,7 +1,6 @@
 import { ILogger } from "psst-log";
 import { mock } from "jest-mock-extended";
 import { Configuration, Context } from "..";
-import { Database } from "../Database";
 import { IObsController } from "../ObsController";
 import * as os from 'os';
 import { IEmailAccess } from "../Email";
@@ -11,12 +10,11 @@ function getContext() {
     let config = mock<Configuration>();
     config.getRootPath.mockReturnValue(os.homedir());
     let logger = mock<ILogger>();
-    let db = mock<Database>();
     let obs = mock<IObsController>();
     let email = mock<IEmailAccess>();
     let fs = mock<IFileSystem>();
 
-    return new Context(config, logger, db, obs, email, fs);
+    return new Context(config, logger, obs, email, fs);
 }
 
 test('construction', () => {
@@ -26,7 +24,6 @@ test('construction', () => {
 test('get context methods', () => {
     let context = getContext();
     expect(context.getConfiguration()).toBeTruthy();
-    expect(context.getDatabase()).toBeTruthy();
     expect(context.getMediaPlayer()).toBeTruthy();
     expect(context.getObs()).toBeTruthy();
     expect(context.getEmail()).toBeTruthy();

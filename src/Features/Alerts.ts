@@ -1,6 +1,6 @@
 import { ILogger, LogManager } from "psst-log";
 
-import { IAlert, IEmailAccess, IObsController, AlertAction, IMediaPlayer, Sound, IDatabase, IContext, IUserCollection, IUserAction } from "../shared";
+import { IAlert, IEmailAccess, IObsController, AlertAction, IMediaPlayer, Sound, IContext } from "../shared";
 import { IMessage } from "../shared/ChatClient";
 import { FeatureBase } from "./FeatureBase";
 
@@ -29,7 +29,6 @@ export class Alerts extends FeatureBase {
     private readonly alertConfig: IAlert;
     private readonly pendingAlerts: PendingAlert[] = [];
     private readonly maxActions: number = 20; // TODO get from config
-    private readonly userDb: IUserCollection;
     private readonly email: IEmailAccess;
     private readonly regex = /(.*) folgt dir jetzt auf Twitch$/g; // TODO configurable regex
     // TODO action file horizontal or vertical
@@ -47,9 +46,6 @@ export class Alerts extends FeatureBase {
         }
 
         this.mediaPlayer = context.getMediaPlayer();
-
-        const db = context.getDatabase();
-        this.userDb = <IUserCollection>db.get("user");
 
         this.obs = context.getObs();
         this.alertConfig = this.config.getAlerts()[0]; // todo handle all alerts
@@ -94,7 +90,6 @@ export class Alerts extends FeatureBase {
 
         let newFollowerAlert = new PendingAlert(hostFrom, () => {
             this.sendHostThanksToChat(hostFrom);
-            this.userDb.newHostFrom(hostFrom);
             this.mediaPlayer.play(Sound.Bell);
             //this.setObsNewHostText(hostFrom);
             this.appendToViewerActionsHistory(hostFrom, "Host");
@@ -122,7 +117,6 @@ export class Alerts extends FeatureBase {
 
         let newFollowerAlert = new PendingAlert(newFollower, () => {
             this.sendFollowerThanksToChat(newFollower);
-            this.userDb.newFollowFrom(newFollower);
             this.setObsNewFollowerText(newFollower);
             this.appendToViewerActionsHistory(newFollower, null);
             this.obs.toggleSource(this.alertConfig.parameter, this.alertConfig.durationInSeconds);
@@ -169,19 +163,10 @@ export class Alerts extends FeatureBase {
         const separator = "  ";
         const endSeparator = "---";
 
-        this.userDb.findLastActions(this.maxActions)
-            .then((result: IUserAction[]) => {
-                let bannerText = "";
-                result.forEach(element => {
-                    let name = this.alertConfig.bannerTextPattern.replace(AlertConst.ViewerPlaceholder, element.name.toString());
-                    bannerText += name + separator;
-                });
-                bannerText += endSeparator + separator;
-                this.obs.setText(this.alertConfig.bannerTextSource, bannerText);
-            })
-            .catch((err) => {
-                this.logger.error("Error finding last actions: " + err);
-            });
+        let name = this.alertConfig.bannerTextPattern.replace(AlertConst.ViewerPlaceholder, viewerName);
+        let bannerText = name + separator;
+        bannerText += endSeparator + separator;
+        this.obs.setText(this.alertConfig.bannerTextSource, bannerText);
     }
 
     private unreadMail(subject: string) {
