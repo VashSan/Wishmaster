@@ -214,9 +214,11 @@ export class SpotifyApiWrapper implements IApiWrapper {
                 const result: ISongInfo[] = [];
 
                 const response = await this.api.getPlaylistTracks(playlistId);
-                response.body.items.forEach((trackItem: SpotifyApi.PlaylistTrackObject)=>{
-                    const song = new SongInfo(trackItem.track, "", this.logger);
-                    result.push(song);
+                response.body.items.forEach((trackItem: SpotifyApi.PlaylistTrackObject) => {
+                    if (trackItem.track != null) {
+                        const song = new SongInfo(trackItem.track, "", this.logger);
+                        result.push(song);
+                    }                   
                 });
                 
                 resolve(result);

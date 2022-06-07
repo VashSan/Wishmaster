@@ -81,7 +81,7 @@ describe('SpotifyApiWrapper', () => {
     beforeEach(() => {
         logger = mock<ILogger>();
         api = mock<SpotifyWebApi>();
-        api.play.mockImplementation(() => new Promise<Response<void>>((resolve) => resolve()));
+        api.play.mockImplementation(() => new Promise<Response<void>>((resolve) => Promise.resolve()));
     });
 
     test('construction', () => {
@@ -175,7 +175,7 @@ describe('SpotifyApiWrapper', () => {
 
     test('setVolume', () => {
         // Arrange
-        api.setVolume.mockImplementation(() => new Promise<Response<void>>((resolve, reject) => { resolve(); }));
+        api.setVolume.mockImplementation(() => new Promise<Response<void>>((resolve, reject) => { Promise.resolve(); }));
 
         const wrapper = new SpotifyApiWrapper(api, logger);
 
