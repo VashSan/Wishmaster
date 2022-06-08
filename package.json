@@ -17,7 +17,7 @@
     "request": "^2.88.2",
     "rimraf": "^3.0.2",
     "spotify-web-api-node": "^4.0.0",
-    "tmp": "^0.1.0",
+    "tmp": "^0.2.1",
     "utf-8-validate": "^5.0.2"
   },
   "devDependencies": {
@@ -28,9 +28,9 @@
     "@types/jest": "^28.1.1",
     "@types/node": "^9.6.55",
     "@types/request": "^2.48.4",
-    "@types/rimraf": "^2.0.3",
+    "@types/rimraf": "^3.0.2",
     "@types/spotify-web-api-node": "^4.0.1",
-    "@types/tmp": "^0.1.0",
+    "@types/tmp": "^0.2.3",
     "codecov": "^3.7.1",
     "jest": "^28.1.1",
     "jest-mock-extended": "^2.0.6",

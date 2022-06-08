@@ -72,12 +72,11 @@ describe('file functions', () => {
         
         // Act
         file.writeAll(existingFile.name, testData);
+        let buffer: Buffer = fs.readFileSync(existingFile.name);
         existingFile.removeCallback();
 
         // Assert
-        let buffer: Buffer = fs.readFileSync(existingFile.name);
         let result = buffer.toString();
-
         expect(result).toBe(testData);
     });
 });
