@@ -6,7 +6,7 @@ import { ILogger } from "psst-log";
 jest.mock("imap-simple");
 import IMAP = require("imap-simple");
 import { IEmailConfig } from "../Configuration";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import { Message } from "../ChatClient";
 
 let config: MockProxy<IConfiguration> & IConfiguration;

@@ -72,7 +72,7 @@ export class SongRequest extends FeatureBase implements ISongRequest {
         const getRemainingTrackTime = async (): Promise<Seconds> => {
             try {
                 return await this.api.getRemainingTrackTime();
-            } catch (err) {
+            } catch (err:any) {
                 if (err.statusCode && err.statusCode == 401 && this.token) {
                     this.token.forceRefresh();
                     this.logger.log("getRemainingTrackTime: Can not fetch remaining track time, will update token.");

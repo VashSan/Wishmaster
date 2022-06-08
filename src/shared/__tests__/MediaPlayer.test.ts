@@ -1,5 +1,5 @@
 
-import { mocked } from 'ts-jest/utils'
+import { mocked } from "jest-mock"
 import { MediaPlayer, IConfiguration, Sound } from "..";
 
 import { execFile } from "child_process";
