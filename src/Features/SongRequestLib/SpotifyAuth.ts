@@ -1,9 +1,8 @@
 import * as request from "request";
 import * as cookieParser from "cookie-parser";
-import * as querystring from "querystring";
 import * as express from "express";
 import * as open from "open";
-import { ISpotifyConfig, Generate, IFileSystem, Seconds } from "../../shared";
+import { ISpotifyConfig, Generate, IFileSystem, Seconds, UrlHelper } from "../../shared";
 import { ILogger, LogManager } from "psst-log";
 import { IApiWrapper } from "../SongRequest";
 
@@ -232,7 +231,7 @@ export class SpotifyAuth implements IWebAuth {
 
             var scope = this.config.scopes.join(" ");
             res.redirect('https://accounts.spotify.com/authorize?' +
-                querystring.stringify({
+                UrlHelper.StringifyParams({
                     response_type: 'code',
                     client_id: this.config.clientId,
                     scope: scope,
@@ -252,7 +251,7 @@ export class SpotifyAuth implements IWebAuth {
             var storedState = req.cookies ? req.cookies[this.stateKey] : null;
             if (state === null || state !== storedState) {
                 res.redirect('/#' +
-                    querystring.stringify({
+                    UrlHelper.StringifyParams({
                         error: 'state_mismatch'
                     }));
             } else {
@@ -291,14 +290,15 @@ export class SpotifyAuth implements IWebAuth {
                         // });
                         // we can also pass the token to the browser to make requests from there
                         res.redirect('/#' +
-                            querystring.stringify({
+                            UrlHelper.StringifyParams({
                                 access_token: this.accessToken,
                                 refresh_token: this.refreshToken
-                            }));
+                            })
+                        );
                     }
                     else {
                         res.redirect('/#' +
-                            querystring.stringify({
+                            UrlHelper.StringifyParams({
                                 error: 'invalid_token'
                             }));
                     }
@@ -320,7 +320,7 @@ export class SpotifyAuth implements IWebAuth {
                 })
                 .catch((reason) => {
                     res.redirect('/#' +
-                        querystring.stringify({
+                        UrlHelper.StringifyParams({
                             error: reason
                         }));
                 });

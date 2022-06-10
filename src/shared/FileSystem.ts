@@ -27,7 +27,7 @@ export class FileSystem implements IFileSystem {
     }
 
     writeAll(path: string, text: string): void {
-        const options = {encoding: this.encoding};
+        const options: fs.WriteFileOptions = {encoding: this.encoding};
         fs.writeFileSync(path, text, options);
     }
 

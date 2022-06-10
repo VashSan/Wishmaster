@@ -1,5 +1,4 @@
 /** Use to convert seconds to other unit */
-
 class TimeBase {
     protected milliseconds: number;
     constructor(ms: number) {
@@ -101,5 +100,12 @@ export class ArrayManip {
             theArray[i] = theArray[j];
             theArray[j] = temp;
         }
+    }
+}
+
+export class UrlHelper {
+    public static StringifyParams(obj:any) : string {
+        let params = new URLSearchParams(obj);
+        return params.toString();
     }
 }

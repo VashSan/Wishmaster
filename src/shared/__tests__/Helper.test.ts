@@ -1,6 +1,6 @@
 import { IgnoreDuringTimeout, Seconds, Generate } from "..";
 import "../custom-matcher";
-import { Hours, Minutes, ArrayManip } from "../Helper";
+import { Hours, Minutes, ArrayManip, UrlHelper } from "../Helper";
 
 describe('seconds', () => {
     test('milliseconds', () => {
@@ -103,11 +103,18 @@ describe('Generate', () => {
     });
 });
 
-describe('ArrayManip', ()=>{
-    test('Shuffle', ()=>{
+describe('ArrayManip', () => {
+    test('Shuffle', () => {
         let source = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let target = [...source];
         ArrayManip.Shuffle(target);
         expect(target).not.toEqual(source);
+    });
+});
+
+describe('UrlHelper', () => {
+    test('StringifyParams', () => {
+        let result = UrlHelper.StringifyParams({a: 1, b: 2});
+        expect(result).toBe('a=1&b=2');
     });
 });
