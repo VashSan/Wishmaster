@@ -18,7 +18,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    rmdir(tmpDir, (err: Error) => {
+    rmdir(tmpDir, (err: Error | null | undefined) => {
         if (err != null) {
             console.error(err.message);
         }

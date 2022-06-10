@@ -4,7 +4,7 @@ import * as tmp from "tmp";
 import * as rmdir from "rimraf";
 import * as fs from "fs";
 
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import { IFileSystem, FileSystem } from "..";
 
 import * as path from "path";
@@ -72,12 +72,11 @@ describe('file functions', () => {
         
         // Act
         file.writeAll(existingFile.name, testData);
+        let buffer: Buffer = fs.readFileSync(existingFile.name);
         existingFile.removeCallback();
 
         // Assert
-        let buffer: Buffer = fs.readFileSync(existingFile.name);
         let result = buffer.toString();
-
         expect(result).toBe(testData);
     });
 });

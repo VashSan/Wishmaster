@@ -1,7 +1,7 @@
 import { ISpotifyConfig, IFileSystem, Seconds } from "../../../shared";
 import { mock, MockProxy } from "jest-mock-extended";
 import { SpotifyAuth, IUpdateableAccessToken, ITokenAndExpiry, AccessToken, IWebAuth } from "../SpotifyAuth";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 
 jest.mock("express");
 import express = require("express");
@@ -43,9 +43,11 @@ describe('AccessToken', () => {
 
     test('setRefreshedToken', (done) => {
         // Arrange
+        let date = mock<Date>();
+        date.getTime.mockReturnValue(Date.now() + new Seconds(0.2).inMilliseconds());
+
         const t3 = mock<ITokenAndExpiry>();
-        t3.expires = mock<Date>();
-        t3.expires.getTime.mockReturnValue(Date.now() + new Seconds(0.2).inMilliseconds());
+        t3.expires = date;
         t3.token = "token3";
 
         auth.refreshAccessToken.mockResolvedValue(t3);
@@ -103,7 +105,7 @@ describe('SpotifyAuth', () => {
         fs.readAll.mockReturnValue(token);
 
         Request.post.mockReset();
-        Request.post.mockImplementation((options, handler) => {
+        Request.post.mockImplementation((options:any, handler:any) => {
             let response = mock<request.Response>();
             response.statusCode = 200;
             if (handler) {
@@ -131,10 +133,10 @@ describe('SpotifyAuth', () => {
         config.authPort = 666;
         config.authHost = "local.test";
 
-        Open.mockImplementation((url) => {
+        Open.mockImplementation((url:string) => {
             expect(url).toBe("http://local.test:666");
             done();
-            return new Promise((resolve) => { resolve() });
+            return new Promise(() => { Promise.resolve() });
         });
 
         fs.exists.mockReturnValue(false);

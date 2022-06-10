@@ -55,14 +55,15 @@ test('connect fails', async () => {
     let actualErr: string = "";
     try {
         await obsController.connect();
-    } catch (err) {
+    } catch (err:any) {
         actualErr = err;
     }
 
     expect(actualErr).toContain("err");
 });
 
-test('reconnect succeeds', async (done) => {
+test('reconnect succeeds', done => {
+    // Arrange
     obs.connect.mockReset();
     obs.connect
         .mockRejectedValueOnce("err")
@@ -70,38 +71,38 @@ test('reconnect succeeds', async (done) => {
 
     let obsController = createObs(new Seconds(0.01));
 
-    try {
-        await obsController.connect();
-    } catch (err) {
+    // Act
+    obsController.connect().catch((err)=>{
         expect(err).toContain("err");
         mockSendInit(obs);
-    }
 
-    setTimeout(() => {
-        const isConnected = obsController.getIsConnected();
-        expect(isConnected).toBeTruthy();
-        done();
-    }, defaultWaitTime.inMilliseconds());
+        // Assert
+        setTimeout(() => {
+            const isConnected = obsController.getIsConnected();
+            expect(isConnected).toBeTruthy();
+            done();
+        }, defaultWaitTime.inMilliseconds());
+    });
 });
 
-test('switchToScene', async (done) => {
+test('switchToScene', done => {
     mockSendInit(obs).mockResolvedValue();
 
     let obsController = createObs();
 
-    await obsController.connect();
+    obsController.connect().then(() => {
+        obsController.switchToScene(TestSceneName);
 
-    obsController.switchToScene(TestSceneName);
-
-    setTimeout((err) => {
-        expect(logger.warn).toBeCalledTimes(0);
-        expect(logger.info).toBeCalledTimes(2);
-        expect(err).toBeUndefined();
-
-        expect(obs.send).toHaveBeenCalledTimes(2);
-        expect(obs.send).toHaveBeenCalledWith("SetCurrentScene", expect.any(Object));
-        done();
-    }, defaultWaitTime.inMilliseconds());
+        setTimeout((err) => {
+            expect(logger.warn).toBeCalledTimes(0);
+            expect(logger.info).toBeCalledTimes(2);
+            expect(err).toBeUndefined();
+    
+            expect(obs.send).toHaveBeenCalledTimes(2);
+            expect(obs.send).toHaveBeenCalledWith("SetCurrentScene", expect.any(Object));
+            done();
+        }, defaultWaitTime.inMilliseconds());
+    });
 });
 
 test('setText', () => {
@@ -160,23 +161,24 @@ test('getVisible', async () => {
     expect(obs.send).toBeCalledWith("GetSceneItemProperties", { item: { name: "source" } });
 });
 
-test('toggleSource', async (done) => {
+test('toggleSource', done => {
     // Arrange
     mockSendInit(obs);
-    const obsController = createObs();
-    await obsController.connect();
-
     obs.send.mockResolvedValue({ visible: true } as any);
 
-    // Act
-    obsController.toggleSource("source", 0.01);
+    const obsController = createObs();
 
-    // Assert
-    setTimeout(() => {
-        expect(obs.send).toHaveBeenNthCalledWith(2, "GetSceneItemProperties", expect.any(Object));
-        expect(obs.send).toHaveBeenNthCalledWith(3, "SetSceneItemProperties", expect.any(Object));
-        expect(obs.send).toHaveBeenNthCalledWith(4, "GetSceneItemProperties", expect.any(Object));
-        expect(obs.send).toHaveBeenNthCalledWith(5, "SetSceneItemProperties", expect.any(Object));
-        done();
-    }, defaultWaitTime.inMilliseconds() * 2);
+    // Act
+    obsController.connect().then(() => {
+        obsController.toggleSource("source", 0.01);
+
+        // Assert
+        setTimeout(() => {
+            expect(obs.send).toHaveBeenNthCalledWith(2, "GetSceneItemProperties", expect.any(Object));
+            expect(obs.send).toHaveBeenNthCalledWith(3, "SetSceneItemProperties", expect.any(Object));
+            expect(obs.send).toHaveBeenNthCalledWith(4, "GetSceneItemProperties", expect.any(Object));
+            expect(obs.send).toHaveBeenNthCalledWith(5, "SetSceneItemProperties", expect.any(Object));
+            done();
+        }, defaultWaitTime.inMilliseconds() * 2);
+    })
 });
